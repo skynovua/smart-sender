@@ -24,6 +24,7 @@ function RootLayout() {
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4">
           <Link
             to="/"
+            search={{ page: 1, search: '' }}
             className="font-semibold focus-visible:outline-2 focus-visible:outline-offset-4"
           >
             Smart Sender
@@ -56,7 +57,11 @@ function NotFoundPage() {
   return (
     <section>
       <h1 className="text-2xl font-semibold">Сторінку не знайдено</h1>
-      <Link to="/" className="mt-4 inline-block text-blue-700 underline">
+      <Link
+        to="/"
+        search={{ page: 1, search: '' }}
+        className="mt-4 inline-block text-blue-700 underline"
+      >
         На головну
       </Link>
     </section>

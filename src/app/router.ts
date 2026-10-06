@@ -10,6 +10,16 @@ export function createAppRouter(context: RouterContext, history?: RouterHistory)
   return createRouter({
     routeTree,
     context,
+    // The assignment uses plain query strings, including numeric search terms.
+    parseSearch: (value) => Object.fromEntries(new URLSearchParams(value)),
+    stringifySearch: (values) => {
+      const params = new URLSearchParams(
+        Object.entries(values).flatMap(([key, value]) =>
+          value === undefined ? [] : [[key, String(value)]],
+        ),
+      ).toString();
+      return params ? `?${params}` : '';
+    },
     ...(history ? { history } : {}),
   });
 }

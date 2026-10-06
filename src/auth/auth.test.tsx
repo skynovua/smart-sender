@@ -42,7 +42,7 @@ async function fillLogin(
 }
 
 test('protects the page and returns to its original URL after the complete login flow', async () => {
-  const target = '/?page=3&search=Customer';
+  const target = '/?page=2&search=webhook';
   const { user, auth, appRouter } = await openApp(target);
   expect(appRouter.state.location.pathname).toBe('/login');
   expect(appRouter.state.location.search.redirect).toBe(target);
@@ -135,7 +135,7 @@ test('a failed rotation clears user/cache and redirects to login', async () => {
   await screen.findByRole('heading', { name: 'Вхід' });
   expect(auth.getUser()).toBeNull();
   expect(queryClient.getQueryCache().getAll()).toHaveLength(0);
-  expect(appRouter.state.location.search.redirect).toBe('/?page=2');
+  expect(appRouter.state.location.search.redirect).toBe('/?page=2&search=');
 });
 
 test.each(['https://evil.example', '//evil.example', '/\\evil.example', '/login'])(
@@ -144,6 +144,6 @@ test.each(['https://evil.example', '//evil.example', '/\\evil.example', '/login'
     const { user, appRouter } = await openApp(`/login?redirect=${encodeURIComponent(destination)}`);
     await fillLogin(user);
     await screen.findByText('Керування вебхуками.');
-    expect(appRouter.state.location.href).toBe('/');
+    expect(appRouter.state.location.href).toBe('/?page=1&search=');
   },
 );
