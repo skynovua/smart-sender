@@ -1,4 +1,4 @@
-import { http, HttpResponse } from 'msw';
+import { delay, http, HttpResponse } from 'msw';
 import { z } from 'zod';
 
 import type {
@@ -54,9 +54,10 @@ const updateSchema: z.ZodType<UpdateWebhookRequest> = z.object({
 
 interface MockApiOptions {
   now?: () => number;
+  listDelayMs?: number;
 }
 
-export function createMockApi({ now = Date.now }: MockApiOptions = {}) {
+export function createMockApi({ now = Date.now, listDelayMs = 0 }: MockApiOptions = {}) {
   let webhooks = createWebhooks();
   let deviceGrant: { token: string; fingerprint: string } | null = null;
   // Session credentials stay inside the mock, never in a response or browser storage.
@@ -157,7 +158,8 @@ export function createMockApi({ now = Date.now }: MockApiOptions = {}) {
       return HttpResponse.json<User>(mockUser);
     }),
 
-    http.get<never, never, WebhookList | ApiErrorResponse>('*/v1/webhooks', ({ request }) => {
+    http.get<never, never, WebhookList | ApiErrorResponse>('*/v1/webhooks', async ({ request }) => {
+      if (listDelayMs > 0) await delay(listDelayMs);
       const failure = guard(request, true);
       if (failure) return failure;
       const params = new URL(request.url).searchParams;

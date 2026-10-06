@@ -1,5 +1,7 @@
 import { setupWorker } from 'msw/browser';
 
-import { handlers } from './handlers';
+import { createMockApi } from './create-mock-api';
 
-export const worker = setupWorker(...handlers);
+const mockApi = createMockApi({ listDelayMs: 350 });
+
+export const worker = setupWorker(...mockApi.handlers);
