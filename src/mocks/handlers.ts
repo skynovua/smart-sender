@@ -1,4 +1,6 @@
-import type { RequestHandler } from 'msw';
+import { createMockApi } from './create-mock-api';
 
-// Shared by browser and test environments. API handlers are the next implementation step.
-export const handlers: RequestHandler[] = [];
+const mockApi = createMockApi();
+
+export const handlers = mockApi.handlers;
+export const resetMockApi = mockApi.reset;

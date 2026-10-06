@@ -1,8 +1,9 @@
 # Smart Sender
 
-Frontend test assignment scaffold. This commit sets up the development environment;
-authentication, the API contract, webhook screens, and the required concurrent-401 test
-will be implemented next.
+Frontend test assignment with a configured development environment and a typed MSW API.
+The mock implements authentication, session expiry/rotation/revocation, and webhook
+listing/editing. The API client, authentication UI, webhook screens, and the required
+concurrent-401 client test are the next implementation steps.
 
 ## Requirements and installation
 
@@ -17,7 +18,8 @@ pnpm dev
 
 The application is available at the local URL printed by Vite. MSW is enabled by default
 in development and production preview builds so the assignment can run without a backend.
-The worker starts before React renders. API handlers are currently empty.
+The worker starts before React renders. All API data and session state live only in mock
+memory; reloading the page resets the session and the 28 seeded webhooks.
 
 An optional `.env` file can be copied from `.env.example`. Set `VITE_ENABLE_MSW=false`
 only when connecting a real backend; Vite must be restarted after changing environment variables.
@@ -39,8 +41,40 @@ only when connecting a real backend; Vite must be restarted after changing envir
 | `pnpm test:watch`      | Run Vitest in watch mode                              |
 | `pnpm check`           | Check formatting, lint, types, and tests              |
 
-There are no committed tests yet. `pnpm test` temporarily allows an empty suite;
-remove `--passWithNoTests` when adding the required session concurrency test.
+Eight HTTP integration tests exercise the mock contract: the exact 30-second expiry boundary,
+rotation and revocation, fingerprint binding, CSRF checks before side effects, captcha and
+field validation, stable pagination/search, editing, and missing records/malformed requests.
+The tests inject a clock into the mock instead of waiting for real time to pass.
+
+Run only the mock contract suite with `pnpm test src/mocks/create-mock-api.test.ts`.
+The assignment's required test of two concurrent 401 responses sharing a single client-side
+rotate will be added with the API client; it is not covered by these server-side tests.
+
+## Mock credentials and contract choices
+
+- Email: `senior@example.com`
+- Password: `SmartSender123!`
+- Login requires a nonempty `X-Captcha-Token`; no captcha widget is needed.
+- Every request requires `X-Requested-With: XMLHttpRequest`.
+- First obtain the fixed CSRF token from the `X-CSRF-TOKEN` response header of `GET /csrf`.
+  All POST and PUT requests require that token in the same request header.
+- Login returns a device grant bound to a 32-character hexadecimal fingerprint. Issue
+  consumes that grant once. Session state is private to the mock and is not returned to clients.
+- Sessions expire at 30 seconds. An expired session can be rotated for another 30 seconds;
+  an unissued or revoked session cannot. Revoke is idempotent for a valid fingerprint and
+  does not affect a session belonging to a different fingerprint.
+
+The assignment leaves a few edge cases open. This implementation makes these choices:
+
+- IDs are numbers and `created_at` is an ISO timestamp string.
+- List size is always 10, regardless of the supplied `limit` value. Invalid page numbers
+  become 1; pages beyond the last page are clamped. An empty result has `current=last=1`.
+- Search is trimmed and matches a name substring without regard to case. Updates trim
+  the name and URL, accept only HTTP/HTTPS URLs, and preserve activity and creation date.
+- Both GET and PUT for a missing webhook return 404 after authentication checks.
+- Malformed JSON, missing `X-Requested-With`, or invalid rotate/revoke bodies return 400.
+  Missing captcha returns 422 with a `captcha` field error. Incorrect credentials return
+  a `password` field error. CSRF failures return 419 before any operation takes place.
 
 ## Tooling decisions
 
@@ -79,12 +113,11 @@ worker with `pnpm exec msw init public --save` after updating MSW.
 
 ```text
 src/
+  api/       Request/response types and the API error contract
   app/       Application providers, QueryClient, typed router
-  mocks/     Shared API handlers, browser worker, test server
+  mocks/     In-memory API, fixtures, response helpers, contract tests, MSW adapters
   routes/    File-based routes and root layout
   test/      Vitest setup and test utilities
 ```
 
 `@/` resolves to `src/` in TypeScript, Vite, and Vitest.
-
-Test credentials will be documented when the authentication mock is implemented.
