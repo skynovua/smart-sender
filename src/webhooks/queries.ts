@@ -22,3 +22,10 @@ export function webhookListOptions(api: ApiClient, params: WebhookSearch) {
     queryFn: ({ signal }) => api.getWebhooks({ ...params, limit: 10 }, signal),
   });
 }
+
+export function webhookDetailOptions(api: ApiClient, id: number) {
+  return queryOptions({
+    queryKey: ['webhooks', 'detail', id],
+    queryFn: ({ signal }) => api.getWebhook(id, signal),
+  });
+}

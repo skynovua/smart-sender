@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router';
 
 import { validateWebhookSearch, webhookListOptions } from '@/webhooks/queries';
 
@@ -123,7 +123,15 @@ function WebhooksPage() {
                   {data.data.map((webhook) => (
                     <tr key={webhook.id}>
                       <th scope="row" className="px-6 py-4 font-medium">
-                        {webhook.name}
+                        <Link
+                          to="/webhooks/$id/edit"
+                          params={{ id: String(webhook.id) }}
+                          search={params}
+                          aria-label={`Редагувати ${webhook.name}`}
+                          className="text-blue-700 underline decoration-blue-200 underline-offset-4 hover:decoration-blue-700 focus-visible:outline-2 focus-visible:outline-offset-4"
+                        >
+                          {webhook.name}
+                        </Link>
                       </th>
                       <td className="max-w-md px-6 py-4 break-all text-slate-600">{webhook.url}</td>
                       <td className="px-6 py-4">

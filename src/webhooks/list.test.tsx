@@ -1,32 +1,21 @@
-import { QueryClient } from '@tanstack/react-query';
-import { createMemoryHistory } from '@tanstack/react-router';
-import { act, render, screen, waitFor, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { act, screen, waitFor, within } from '@testing-library/react';
+import type userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { beforeEach, expect, test, vi } from 'vitest';
 
-import { App } from '@/app/app';
-import { createAppRouter } from '@/app/router';
-import { AuthSession } from '@/auth/session';
-import { createWebhooks, mockCredentials } from '@/mocks/fixtures';
+import { createWebhooks } from '@/mocks/fixtures';
 import { resetMockApi } from '@/mocks/handlers';
 import { server } from '@/mocks/server';
+import { renderAuthenticatedApp } from '@/test/render-authenticated-app';
 
 beforeEach(() => {
   vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
 });
 
 async function openWebhooks(path = '/') {
-  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  const auth = new AuthSession(queryClient);
-  await auth.signIn(mockCredentials);
-  const appRouter = createAppRouter(
-    { auth, queryClient },
-    createMemoryHistory({ initialEntries: [path] }),
-  );
-  const view = render(<App appRouter={appRouter} />);
+  const view = await renderAuthenticatedApp(path);
   await screen.findByRole('heading', { name: 'Вебхуки' });
-  return { ...view, appRouter, user: userEvent.setup() };
+  return view;
 }
 
 async function searchFor(user: ReturnType<typeof userEvent.setup>, search: string) {
