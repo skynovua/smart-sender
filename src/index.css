@@ -168,6 +168,25 @@
     );
   }
 
+  .skeleton {
+    background-color: var(--color-charcoal);
+    background-image: linear-gradient(
+      100deg,
+      transparent 30%,
+      color-mix(in srgb, var(--color-light-azure) 8%, transparent) 50%,
+      transparent 70%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 2s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton {
+      animation: none;
+      background-image: none;
+    }
+  }
+
   @media (min-width: 640px) {
     .field {
       font-size: 0.875rem;
@@ -184,5 +203,14 @@
       background-color: var(--color-charcoal);
       color: var(--color-ink);
     }
+  }
+}
+
+@keyframes skeleton-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
   }
 }

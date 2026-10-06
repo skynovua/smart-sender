@@ -4,7 +4,9 @@ import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, Link } from '@tanstack/react-router';
 
 import { Icon } from '@/ui/icon';
+import { Skeleton } from '@/ui/skeleton';
 import { validateWebhookSearch, webhookListOptions } from '@/webhooks/queries';
+import { WebhookListSkeleton, WebhookTable } from '@/webhooks/table';
 
 export const Route = createFileRoute('/_authenticated/')({
   validateSearch: validateWebhookSearch,
@@ -32,11 +34,9 @@ function WebhooksPage() {
       <p className="eyebrow mb-3">Інтеграції</p>
       <div className="flex items-center gap-3">
         <h1 className="text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">Вебхуки</h1>
-        {data && (
-          <span className="rounded-md border border-border bg-surface px-2.5 py-1 font-mono text-xs text-muted">
-            {data.paging.results.total}
-          </span>
-        )}
+        <span className="inline-flex h-[26px] min-w-9 items-center justify-center rounded-md border border-border bg-surface px-2 font-mono text-xs text-muted">
+          {data ? data.paging.results.total : isPending ? <Skeleton className="h-3 w-4" /> : '—'}
+        </span>
       </div>
       <p className="mt-3 text-sm text-muted">Керування вебхуками.</p>
       <form
@@ -82,15 +82,28 @@ function WebhooksPage() {
       </form>
 
       <div
-        className="overflow-hidden rounded-b-xl border border-t-0 border-border bg-surface"
+        className="min-h-[694px] overflow-hidden rounded-b-xl border border-t-0 border-border bg-surface"
         aria-busy={isFetching}
       >
+        {isError && data && (
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-6 py-3">
+            <p role="alert" className="text-sm text-danger">
+              Не вдалося оновити вебхуки. Показуємо останні завантажені дані.
+            </p>
+            <button
+              type="button"
+              onClick={() => void refetch()}
+              disabled={isFetching}
+              className="button-secondary"
+            >
+              Спробувати ще раз
+            </button>
+          </div>
+        )}
         {isPending ? (
-          <p role="status" className="p-8 text-muted">
-            Завантажуємо вебхуки…
-          </p>
-        ) : isError ? (
-          <div className="p-8">
+          <WebhookListSkeleton />
+        ) : isError && !data ? (
+          <div className="flex min-h-[693px] flex-col items-center justify-center p-8 text-center">
             <p role="alert" className="text-danger">
               Не вдалося завантажити вебхуки.
             </p>
@@ -104,7 +117,7 @@ function WebhooksPage() {
             </button>
           </div>
         ) : data.data.length === 0 ? (
-          <div className="p-8">
+          <div className="flex min-h-[693px] flex-col items-center justify-center p-8 text-center">
             <h2 className="font-semibold">Вебхуків не знайдено</h2>
             <p className="mt-2 text-muted">
               {params.search
@@ -114,70 +127,54 @@ function WebhooksPage() {
           </div>
         ) : (
           <>
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[640px] text-left text-sm">
-                <caption className="sr-only">Список вебхуків</caption>
-                <thead className="border-b border-border bg-canvas/40 text-xs text-muted">
-                  <tr>
-                    <th scope="col" className="px-6 py-4 font-medium">
-                      Назва
+            <WebhookTable>
+              <tbody className="divide-y divide-border/50">
+                {data.data.map((webhook) => (
+                  <tr key={webhook.id} className="group hover:bg-charcoal/30">
+                    <th scope="row" className="px-6 py-3 font-medium">
+                      <Link
+                        to="/webhooks/$id/edit"
+                        params={{ id: String(webhook.id) }}
+                        search={params}
+                        aria-label={`Редагувати ${webhook.name}`}
+                        className="inline-flex items-center gap-3 rounded-sm text-ink hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus"
+                      >
+                        <span className="grid size-8 shrink-0 place-items-center rounded-lg border border-primary/25 bg-primary/10 text-mid-azure">
+                          <Icon name="webhook" className="size-4" />
+                        </span>
+                        {webhook.name}
+                        <Icon
+                          name="arrowRight"
+                          className="size-3.5 shrink-0 text-muted opacity-0 group-hover:opacity-100"
+                        />
+                      </Link>
                     </th>
-                    <th scope="col" className="px-6 py-4 font-medium">
-                      URL
-                    </th>
-                    <th scope="col" className="px-6 py-4 font-medium">
-                      Статус
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/50">
-                  {data.data.map((webhook) => (
-                    <tr key={webhook.id} className="group hover:bg-charcoal/30">
-                      <th scope="row" className="px-6 py-3 font-medium">
-                        <Link
-                          to="/webhooks/$id/edit"
-                          params={{ id: String(webhook.id) }}
-                          search={params}
-                          aria-label={`Редагувати ${webhook.name}`}
-                          className="inline-flex items-center gap-3 rounded-sm text-ink hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus"
-                        >
-                          <span className="grid size-8 shrink-0 place-items-center rounded-lg border border-primary/25 bg-primary/10 text-mid-azure">
-                            <Icon name="webhook" className="size-4" />
-                          </span>
-                          {webhook.name}
-                          <Icon
-                            name="arrowRight"
-                            className="size-3.5 shrink-0 text-muted opacity-0 group-hover:opacity-100"
-                          />
-                        </Link>
-                      </th>
-                      <td className="max-w-lg px-6 py-3 font-mono text-xs break-all text-muted">
-                        {webhook.url}
-                      </td>
-                      <td className="px-6 py-3">
+                    <td className="max-w-lg px-6 py-3 font-mono text-xs break-all text-muted">
+                      {webhook.url}
+                    </td>
+                    <td className="px-6 py-3">
+                      <span
+                        className={
+                          webhook.active
+                            ? 'inline-flex items-center gap-2 rounded-md border border-mid-azure/20 bg-primary/15 px-2.5 py-1 text-xs font-medium text-light-azure'
+                            : 'inline-flex items-center gap-2 rounded-md border border-border px-2.5 py-1 text-xs font-medium text-muted'
+                        }
+                      >
                         <span
+                          aria-hidden="true"
                           className={
                             webhook.active
-                              ? 'inline-flex items-center gap-2 rounded-md border border-mid-azure/20 bg-primary/15 px-2.5 py-1 text-xs font-medium text-light-azure'
-                              : 'inline-flex items-center gap-2 rounded-md border border-border px-2.5 py-1 text-xs font-medium text-muted'
+                              ? 'size-1.5 rounded-full bg-mid-azure'
+                              : 'size-1.5 rounded-full bg-muted'
                           }
-                        >
-                          <span
-                            aria-hidden="true"
-                            className={
-                              webhook.active
-                                ? 'size-1.5 rounded-full bg-mid-azure'
-                                : 'size-1.5 rounded-full bg-muted'
-                            }
-                          />
-                          {webhook.active ? 'Активний' : 'Неактивний'}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                        />
+                        {webhook.active ? 'Активний' : 'Неактивний'}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </WebhookTable>
             <nav
               aria-label="Пагінація вебхуків"
               className="flex flex-wrap items-center justify-between gap-4 border-t border-border px-6 py-4"
@@ -186,7 +183,7 @@ function WebhooksPage() {
                 Усього: {data.paging.results.total} · Сторінка {data.paging.pages.current} з{' '}
                 {data.paging.pages.last}
               </p>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
                   disabled={data.paging.pages.current <= 1}

@@ -9,6 +9,7 @@ import { z } from 'zod';
 import type { UpdateWebhookRequest, Webhook } from '@/api/contracts';
 import { ApiError, SessionChangedError } from '@/api/errors';
 import { Icon } from '@/ui/icon';
+import { WebhookEditSkeleton } from '@/webhooks/edit-skeleton';
 import { validateWebhookSearch, webhookDetailOptions } from '@/webhooks/queries';
 
 const editSchema = z.object({
@@ -63,9 +64,7 @@ function WebhookEditPage() {
         {notFound ? (
           <h1 className="text-2xl font-semibold">Вебхук не знайдено</h1>
         ) : isPending ? (
-          <p role="status" className="text-muted">
-            Завантажуємо вебхук…
-          </p>
+          <WebhookEditSkeleton />
         ) : isError && !data ? (
           errorNotice
         ) : data ? (

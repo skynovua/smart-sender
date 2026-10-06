@@ -199,3 +199,65 @@ test('history navigation discards an unapplied search draft even when the applie
   expect(screen.getByLabelText('Пошук за назвою')).toHaveValue('webhook');
   expect(appRouter.state.location.search).toEqual({ page: '1', search: 'webhook' });
 });
+
+test('an uncached page shows loading without old rows or resetting the selected page', async () => {
+  const { user, appRouter } = await openWebhooks();
+  await screen.findByText('Payment webhook 01');
+  const started = deferred();
+  const pending = deferred();
+  server.use(
+    http.get('*/v1/webhooks', async ({ request }) => {
+      if (new URL(request.url).searchParams.get('page') !== '2') return;
+      started.resolve();
+      await pending.promise;
+      return;
+    }),
+  );
+
+  await user.click(screen.getByRole('button', { name: 'Наступна' }));
+  await started.promise;
+  expect(await screen.findByRole('status')).toHaveTextContent('Завантажуємо вебхуки…');
+  expect(screen.queryByText('Payment webhook 01')).not.toBeInTheDocument();
+  expect(screen.getByLabelText('Пошук за назвою')).toHaveValue('');
+  expect(appRouter.state.location.search.page).toBe('2');
+
+  pending.resolve();
+  await screen.findByRole('link', { name: 'Редагувати Subscription webhook 11' });
+  expect(screen.queryByRole('status')).not.toBeInTheDocument();
+  expect(screen.getByText('Усього: 28 · Сторінка 2 з 3')).toBeInTheDocument();
+});
+
+test('background loading and a refresh failure retain the cached rows until a successful retry', async () => {
+  const { user, queryClient } = await openWebhooks();
+  await screen.findByText('Payment webhook 01');
+  const started = deferred();
+  const pending = deferred();
+  server.use(
+    http.get('*/v1/webhooks', async () => {
+      started.resolve();
+      await pending.promise;
+      return HttpResponse.error();
+    }),
+  );
+  let reload!: Promise<void>;
+  await act(async () => {
+    reload = queryClient.invalidateQueries({ queryKey: ['webhooks', 'list'] });
+    await started.promise;
+  });
+  expect(visibleRows()).toHaveLength(10);
+  expect(screen.queryByRole('status')).not.toBeInTheDocument();
+
+  await act(async () => {
+    pending.resolve();
+    await reload;
+  });
+  expect(await screen.findByRole('alert')).toHaveTextContent('Не вдалося оновити вебхуки.');
+  expect(visibleRows()).toHaveLength(10);
+  expect(screen.getByRole('link', { name: 'Редагувати Payment webhook 01' })).toBeInTheDocument();
+
+  server.resetHandlers();
+  await user.click(screen.getByRole('button', { name: 'Спробувати ще раз' }));
+  expect(visibleRows()).toHaveLength(10);
+  await waitFor(() => expect(screen.queryByRole('alert')).not.toBeInTheDocument());
+  expect(visibleRows()).toHaveLength(10);
+});
