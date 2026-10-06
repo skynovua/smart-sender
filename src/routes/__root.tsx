@@ -69,13 +69,6 @@ function RootLayout() {
                 Вебхуки
               </Link>
             </nav>
-            <div className="mt-auto pt-20">
-              <p className="px-3 text-xs leading-5 text-muted">
-                Smart Sender
-                <br />
-                Простір ваших інтеграцій
-              </p>
-            </div>
           </aside>
         )}
         <main
