@@ -36,6 +36,22 @@ function WebhookEditPage() {
   });
   const notFound = !validId || (error instanceof ApiError && error.status === 404);
 
+  const errorNotice = (
+    <div className={data ? 'mb-6' : undefined}>
+      <p role="alert" className="text-red-700">
+        {data ? 'Не вдалося оновити дані вебхука.' : 'Не вдалося завантажити вебхук.'}
+      </p>
+      <button
+        type="button"
+        onClick={() => void refetch()}
+        disabled={isFetching}
+        className="mt-4 rounded-lg border border-slate-300 px-4 py-2 font-medium hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-wait disabled:opacity-50"
+      >
+        Спробувати ще раз
+      </button>
+    </div>
+  );
+
   return (
     <section className="mx-auto max-w-xl">
       <Link
@@ -52,23 +68,14 @@ function WebhookEditPage() {
           <p role="status" className="text-slate-600">
             Завантажуємо вебхук…
           </p>
-        ) : isError ? (
-          <div>
-            <p role="alert" className="text-red-700">
-              Не вдалося завантажити вебхук.
-            </p>
-            <button
-              type="button"
-              onClick={() => void refetch()}
-              disabled={isFetching}
-              className="mt-4 rounded-lg border border-slate-300 px-4 py-2 font-medium hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-wait disabled:opacity-50"
-            >
-              Спробувати ще раз
-            </button>
-          </div>
-        ) : (
-          <WebhookEditForm key={data.id} webhook={data} />
-        )}
+        ) : isError && !data ? (
+          errorNotice
+        ) : data ? (
+          <>
+            {isError && errorNotice}
+            <WebhookEditForm key={data.id} webhook={data} />
+          </>
+        ) : null}
       </div>
     </section>
   );

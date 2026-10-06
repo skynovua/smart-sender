@@ -251,3 +251,21 @@ test('leaving a pending save does not redirect a user back to the old list param
   await waitFor(() => expect(screen.getByLabelText('Назва')).toHaveValue('Webhook saved later'));
   expect(appRouter.state.location.pathname).toBe('/webhooks/11/edit');
 });
+
+test('a failed background reload preserves the dirty draft and can be retried without resetting it', async () => {
+  const { user, queryClient } = await openEdit();
+  await changeName(user, 'Webhook draft survives reload failure');
+  server.use(http.get('*/v1/webhooks/:id', () => HttpResponse.error()));
+  await act(async () => {
+    await queryClient.invalidateQueries({ queryKey: ['webhooks', 'detail', 11] });
+  });
+  const alert = await screen.findByRole('alert');
+  expect(screen.getByLabelText('Назва')).toHaveValue('Webhook draft survives reload failure');
+  expect(alert).toHaveTextContent('Не вдалося оновити дані вебхука.');
+  server.resetHandlers();
+  await user.click(screen.getByRole('button', { name: 'Спробувати ще раз' }));
+  await waitFor(() => expect(screen.queryByRole('alert')).not.toBeInTheDocument());
+  expect(screen.getByLabelText('Назва')).toHaveValue('Webhook draft survives reload failure');
+  await user.click(screen.getByRole('button', { name: 'Зберегти' }));
+  await screen.findByRole('link', { name: 'Редагувати Webhook draft survives reload failure' });
+});

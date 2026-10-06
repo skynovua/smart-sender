@@ -12,12 +12,18 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-MSW is enabled by default. Mock data resets on page reload.
+MSW is enabled by default. Reloading resets mock data and the session, so sign in again; list page/search parameters remain in the URL.
 
 ## Tests
 
 ```sh
 pnpm test
+```
+
+To run only the required concurrent `401` scenario:
+
+```sh
+pnpm test src/api/client.test.ts -t 'two parallel 401s'
 ```
 
 The integration tests cover the mock API contract, API client, authentication UI, webhook list navigation, and editing. They include two concurrent `401` responses sharing one token rotation and then retrying successfully.
