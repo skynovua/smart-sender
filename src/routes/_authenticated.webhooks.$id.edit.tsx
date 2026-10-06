@@ -8,6 +8,7 @@ import { z } from 'zod';
 
 import type { UpdateWebhookRequest, Webhook } from '@/api/contracts';
 import { ApiError, SessionChangedError } from '@/api/errors';
+import { Icon } from '@/ui/icon';
 import { validateWebhookSearch, webhookDetailOptions } from '@/webhooks/queries';
 
 const editSchema = z.object({
@@ -45,7 +46,7 @@ function WebhookEditPage() {
         type="button"
         onClick={() => void refetch()}
         disabled={isFetching}
-        className="mt-4 rounded-lg border border-input-border px-4 py-2 font-medium hover:bg-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-wait disabled:opacity-50"
+        className="button-secondary mt-4"
       >
         Спробувати ще раз
       </button>
@@ -53,15 +54,12 @@ function WebhookEditPage() {
   );
 
   return (
-    <section className="mx-auto max-w-xl">
-      <Link
-        to="/"
-        search={params}
-        className="text-sm text-accent underline focus-visible:outline-2 focus-visible:outline-offset-4"
-      >
+    <section className="max-w-5xl">
+      <Link to="/" search={params} className="button-ghost -ml-4">
+        <Icon name="arrowLeft" className="size-4" />
         До списку вебхуків
       </Link>
-      <div className="mt-6 rounded-2xl border border-border bg-surface p-6 shadow-sm sm:p-8">
+      <div className="mt-7">
         {notFound ? (
           <h1 className="text-2xl font-semibold">Вебхук не знайдено</h1>
         ) : isPending ? (
@@ -138,77 +136,107 @@ function WebhookEditForm({ webhook }: { webhook: Webhook }) {
 
   return (
     <>
-      <h1 className="text-2xl font-semibold tracking-tight">Редагування вебхука</h1>
-      <p className="mt-2 text-sm text-muted">Змініть назву або URL для отримання подій.</p>
-      <form
-        onSubmit={(event) => void handleSubmit(submit)(event)}
-        noValidate
-        className="mt-8 space-y-5"
-      >
-        <div>
-          <label htmlFor="webhook-name" className="block text-sm font-medium">
-            Назва
-          </label>
-          <input
-            {...register('name')}
-            id="webhook-name"
-            type="text"
-            readOnly={isSubmitting}
-            aria-invalid={Boolean(errors.name)}
-            aria-describedby={errors.name ? 'name-error' : undefined}
-            className="mt-2 w-full rounded-lg border border-input-border bg-canvas px-3 py-2.5 focus-visible:outline-2 focus-visible:outline-focus aria-invalid:border-danger"
-          />
-          {errors.name && (
-            <p id="name-error" role="alert" className="mt-2 text-sm text-danger">
-              {errors.name.message}
+      <p className="eyebrow mb-3">Налаштування інтеграції</p>
+      <h1 className="text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">
+        Редагування вебхука
+      </h1>
+      <p className="mt-3 text-sm text-muted">Змініть назву або URL для отримання подій.</p>
+      <div className="mt-8 grid items-start gap-8 xl:grid-cols-[minmax(0,1fr)_220px]">
+        <form
+          onSubmit={(event) => void handleSubmit(submit)(event)}
+          noValidate
+          className="overflow-hidden rounded-xl border border-border bg-surface"
+        >
+          <div className="border-b border-border px-6 py-5 sm:px-8">
+            <h2 className="text-sm font-semibold">Основні параметри</h2>
+            <p className="mt-1.5 text-xs text-muted">
+              Назва інтеграції та адреса отримувача подій.
             </p>
-          )}
-        </div>
-        <div>
-          <label htmlFor="webhook-url" className="block text-sm font-medium">
-            URL
-          </label>
-          <input
-            {...register('url')}
-            id="webhook-url"
-            type="url"
-            readOnly={isSubmitting}
-            aria-invalid={Boolean(errors.url)}
-            aria-describedby={errors.url ? 'url-error' : 'url-hint'}
-            className="mt-2 w-full rounded-lg border border-input-border bg-canvas px-3 py-2.5 focus-visible:outline-2 focus-visible:outline-focus aria-invalid:border-danger"
-          />
-          {errors.url ? (
-            <p id="url-error" role="alert" className="mt-2 text-sm text-danger">
-              {errors.url.message}
-            </p>
-          ) : (
-            <p id="url-hint" className="mt-2 text-sm text-muted">
-              Адреса має починатися з http:// або https://.
-            </p>
-          )}
-        </div>
-        {errors.root && (
-          <p role="alert" className="text-sm text-danger">
-            {errors.root.message}
+          </div>
+          <div className="space-y-7 px-6 py-7 sm:px-8">
+            <div>
+              <label htmlFor="webhook-name" className="field-label">
+                Назва
+              </label>
+              <input
+                {...register('name')}
+                id="webhook-name"
+                type="text"
+                readOnly={isSubmitting}
+                aria-invalid={Boolean(errors.name)}
+                aria-describedby={errors.name ? 'name-error' : undefined}
+                className="field mt-2.5"
+              />
+              {errors.name && (
+                <p id="name-error" role="alert" className="mt-2 text-sm text-danger">
+                  {errors.name.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <label htmlFor="webhook-url" className="field-label">
+                URL
+              </label>
+              <input
+                {...register('url')}
+                id="webhook-url"
+                type="url"
+                readOnly={isSubmitting}
+                aria-invalid={Boolean(errors.url)}
+                aria-describedby={errors.url ? 'url-error' : 'url-hint'}
+                className="field mt-2.5 font-mono sm:text-xs"
+              />
+              {errors.url ? (
+                <p id="url-error" role="alert" className="mt-2 text-sm text-danger">
+                  {errors.url.message}
+                </p>
+              ) : (
+                <p id="url-hint" className="mt-3 text-xs leading-5 text-muted">
+                  Адреса має починатися з http:// або https://.
+                </p>
+              )}
+            </div>
+            {errors.root && (
+              <p role="alert" className="text-sm text-danger">
+                {errors.root.message}
+              </p>
+            )}
+          </div>
+          <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border px-6 py-4 sm:px-8">
+            <Link to="/" search={params} className="button-ghost">
+              Скасувати
+            </Link>
+            <button type="submit" disabled={isSubmitting} className="button-primary">
+              {isSubmitting ? 'Зберігаємо…' : 'Зберегти'}
+              <Icon name="arrowRight" className="size-4" />
+            </button>
+          </div>
+        </form>
+        <aside aria-label="Інформація про вебхук" className="border-l border-border py-1 pl-6">
+          <p className="eyebrow">Вибраний вебхук</p>
+          <p className="mt-4 font-mono text-lg text-accent">
+            #{webhook.id.toString().padStart(2, '0')}
           </p>
-        )}
-        <div className="flex flex-wrap gap-3">
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="rounded-lg bg-primary px-4 py-2.5 font-medium text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-wait disabled:opacity-70"
-          >
-            {isSubmitting ? 'Зберігаємо…' : 'Зберегти'}
-          </button>
-          <Link
-            to="/"
-            search={params}
-            className="rounded-lg border border-input-border px-4 py-2.5 font-medium hover:bg-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
-          >
-            Скасувати
-          </Link>
-        </div>
-      </form>
+          <div className="mt-4 flex items-center gap-2 text-xs text-muted">
+            <span
+              aria-hidden="true"
+              className={
+                webhook.active
+                  ? 'size-1.5 rounded-full bg-mid-azure'
+                  : 'size-1.5 rounded-full bg-muted'
+              }
+            />
+            {webhook.active ? 'Активний' : 'Неактивний'}
+          </div>
+          <div className="mt-8 border-t border-border pt-6">
+            <Icon name="globe" className="mb-3 size-5 text-mid-azure" />
+            <p className="text-sm font-medium">Адреса отримувача</p>
+            <p className="mt-2 text-xs leading-6 text-muted">
+              Вкажіть URL застосунку, який має отримувати події цього вебхука.
+            </p>
+          </div>
+        </aside>
+      </div>
     </>
   );
 }

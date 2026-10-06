@@ -5,6 +5,7 @@ import { z } from 'zod';
 
 import { ApiError, SessionChangedError } from '@/api/errors';
 import { safeReturnTo } from '@/auth/return-to';
+import { Icon } from '@/ui/icon';
 
 const loginSchema = z.object({
   email: z.string().trim().pipe(z.email('Введіть коректну електронну адресу.')),
@@ -61,65 +62,95 @@ function LoginPage() {
   });
 
   return (
-    <section className="mx-auto max-w-md rounded-2xl border border-border bg-surface p-6 shadow-sm sm:p-8">
-      <h1 className="text-2xl font-semibold tracking-tight">Вхід</h1>
-      <p className="mt-2 text-sm text-muted">Увійдіть, щоб керувати вебхуками.</p>
-      <form onSubmit={(event) => void submit(event)} noValidate className="mt-8 space-y-5">
-        <fieldset className="space-y-5">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium">
-              Електронна адреса
-            </label>
-            <input
-              {...register('email')}
-              id="email"
-              type="email"
-              autoComplete="username"
-              readOnly={isSubmitting}
-              aria-invalid={Boolean(errors.email)}
-              aria-describedby={errors.email ? 'email-error' : undefined}
-              className="mt-2 w-full rounded-lg border border-input-border bg-canvas px-3 py-2.5 focus-visible:outline-2 focus-visible:outline-focus aria-invalid:border-danger"
-            />
-            {errors.email && (
-              <p id="email-error" role="alert" className="mt-2 text-sm text-danger">
-                {errors.email.message}
+    <section className="mx-auto grid min-h-[calc(100svh-5rem)] max-w-6xl items-center gap-12 py-12 lg:grid-cols-[1.15fr_1fr] lg:gap-20 lg:py-12">
+      <div className="login-art hidden lg:block">
+        <p className="eyebrow mb-7 text-mid-azure">Простір для ваших інтеграцій</p>
+        <h2 className="text-5xl leading-[1.1] font-semibold tracking-[-0.045em] xl:text-6xl">
+          Ваші інтеграції.
+          <br />
+          <span className="text-mid-azure">Під контролем.</span>
+        </h2>
+        <p className="mt-6 max-w-sm text-base leading-7 text-muted">
+          Керуйте вебхуками та налаштовуйте адреси, на які ваш застосунок отримуватиме події.
+        </p>
+        <div aria-hidden="true" className="mt-14 flex max-w-sm items-start">
+          {(['Подія', 'Вебхук', 'Застосунок'] as const).map((label, index) => (
+            <div key={label} className="flex flex-1 items-start last:flex-none">
+              <div className="text-center">
+                <span
+                  className={
+                    index === 1
+                      ? 'grid size-16 place-items-center rounded-2xl border border-mid-azure/40 bg-primary text-on-primary shadow-[0_0_50px_#00638e33]'
+                      : 'grid size-16 place-items-center rounded-2xl border border-border bg-surface text-accent'
+                  }
+                >
+                  <Icon name={index === 2 ? 'globe' : 'webhook'} className="size-7" />
+                </span>
+                <p className="mt-4 text-xs text-muted">{label}</p>
+              </div>
+              {index < 2 && <span className="mt-8 h-px flex-1 bg-brand-gradient" />}
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="mx-auto w-full max-w-md rounded-2xl border border-border bg-surface p-7 sm:p-10">
+        <p className="eyebrow mb-4">Ваш робочий простір</p>
+        <h1 className="text-3xl font-semibold tracking-[-0.035em]">Вхід</h1>
+        <p className="mt-2 text-sm text-muted">Увійдіть, щоб керувати вебхуками.</p>
+        <form onSubmit={(event) => void submit(event)} noValidate className="mt-8 space-y-5">
+          <fieldset className="space-y-5">
+            <div>
+              <label htmlFor="email" className="field-label">
+                Електронна адреса
+              </label>
+              <input
+                {...register('email')}
+                id="email"
+                type="email"
+                autoComplete="username"
+                readOnly={isSubmitting}
+                aria-invalid={Boolean(errors.email)}
+                aria-describedby={errors.email ? 'email-error' : undefined}
+                className="field mt-2"
+              />
+              {errors.email && (
+                <p id="email-error" role="alert" className="mt-2 text-sm text-danger">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <label htmlFor="password" className="field-label">
+                Пароль
+              </label>
+              <input
+                {...register('password')}
+                id="password"
+                type="password"
+                autoComplete="current-password"
+                readOnly={isSubmitting}
+                aria-invalid={Boolean(errors.password)}
+                aria-describedby={errors.password ? 'password-error' : undefined}
+                className="field mt-2"
+              />
+              {errors.password && (
+                <p id="password-error" role="alert" className="mt-2 text-sm text-danger">
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
+            {errors.root && (
+              <p role="alert" className="text-sm text-danger">
+                {errors.root.message}
               </p>
             )}
-          </div>
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium">
-              Пароль
-            </label>
-            <input
-              {...register('password')}
-              id="password"
-              type="password"
-              autoComplete="current-password"
-              readOnly={isSubmitting}
-              aria-invalid={Boolean(errors.password)}
-              aria-describedby={errors.password ? 'password-error' : undefined}
-              className="mt-2 w-full rounded-lg border border-input-border bg-canvas px-3 py-2.5 focus-visible:outline-2 focus-visible:outline-focus aria-invalid:border-danger"
-            />
-            {errors.password && (
-              <p id="password-error" role="alert" className="mt-2 text-sm text-danger">
-                {errors.password.message}
-              </p>
-            )}
-          </div>
-          {errors.root && (
-            <p role="alert" className="text-sm text-danger">
-              {errors.root.message}
-            </p>
-          )}
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full rounded-lg bg-primary px-4 py-2.5 font-medium text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-wait"
-          >
-            {isSubmitting ? 'Входимо…' : 'Увійти'}
-          </button>
-        </fieldset>
-      </form>
+            <button type="submit" disabled={isSubmitting} className="button-primary mt-2 w-full">
+              {isSubmitting ? 'Входимо…' : 'Увійти'}
+              <Icon name="arrowRight" className="size-4" />
+            </button>
+          </fieldset>
+        </form>
+      </div>
     </section>
   );
 }

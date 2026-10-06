@@ -3,6 +3,7 @@ import { createRootRouteWithContext, Link, Outlet } from '@tanstack/react-router
 
 import type { AuthSession } from '@/auth/session';
 import { useUser } from '@/auth/use-user';
+import { Icon } from '@/ui/icon';
 
 export interface RouterContext {
   queryClient: QueryClient;
@@ -20,36 +21,73 @@ function RootLayout() {
 
   return (
     <div className="min-h-svh bg-canvas text-ink">
-      <div aria-hidden="true" className="h-1 bg-brand-gradient" />
-      <header className="border-b border-border bg-surface px-6 py-4">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4">
-          <Link
-            to="/"
-            search={{ page: 1, search: '' }}
-            className="font-semibold text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus"
-          >
-            Smart Sender
+      <header className="border-b border-border bg-canvas px-5 sm:px-8">
+        <div className="mx-auto flex h-20 max-w-[1600px] items-center justify-between gap-4">
+          <Link to="/" search={{ page: 1, search: '' }} className="brand-link sm:gap-3 sm:text-lg">
+            <span className="brand-mark">
+              <Icon name="webhook" className="size-6" />
+            </span>
+            <span>
+              Smart Sender<span className="text-mid-azure">.</span>
+            </span>
           </Link>
           {user && (
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-muted">{user.name}</span>
+            <div className="flex items-center gap-3 sm:gap-5">
+              <span className="hidden text-sm text-muted sm:block">{user.name}</span>
+              <span
+                aria-hidden="true"
+                className="hidden size-9 place-items-center rounded-full border border-border bg-surface text-xs font-semibold text-accent sm:grid"
+              >
+                {user.name.slice(0, 1)}
+              </span>
               <button
                 type="button"
                 onClick={() => {
                   // Local logout completes even when the revoke request fails.
                   void auth.signOut().catch(() => {});
                 }}
-                className="rounded-lg border border-input-border px-3 py-2 text-sm font-medium hover:bg-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+                className="button-ghost"
               >
+                <Icon name="logout" className="size-4" />
                 Вийти
               </button>
             </div>
           )}
         </div>
       </header>
-      <main className="mx-auto max-w-5xl px-6 py-12">
-        <Outlet />
-      </main>
+      <div className="mx-auto flex max-w-[1600px]">
+        {user && (
+          <aside className="hidden w-56 shrink-0 flex-col border-r border-border px-5 py-10 lg:flex">
+            <p className="eyebrow px-3">Робочий простір</p>
+            <nav aria-label="Основна навігація" className="mt-5">
+              <Link
+                to="/"
+                search={{ page: 1, search: '' }}
+                className="flex items-center gap-3 rounded-lg border border-primary/30 bg-primary/15 px-3 py-3 text-sm font-medium text-accent"
+              >
+                <Icon name="webhook" className="size-5" />
+                Вебхуки
+              </Link>
+            </nav>
+            <div className="mt-auto pt-20">
+              <p className="px-3 text-xs leading-5 text-muted">
+                Smart Sender
+                <br />
+                Простір ваших інтеграцій
+              </p>
+            </div>
+          </aside>
+        )}
+        <main
+          className={
+            user
+              ? 'min-h-[calc(100svh-5rem)] min-w-0 flex-1 px-5 py-8 sm:px-8 sm:py-10 xl:px-12'
+              : 'w-full px-5 sm:px-8'
+          }
+        >
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 }
