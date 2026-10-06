@@ -162,9 +162,9 @@
 
   .login-art {
     background: radial-gradient(
-      ellipse at 35% 50%,
+      ellipse 50% 50% at 50% 50%,
       color-mix(in srgb, var(--color-primary) 18%, transparent),
-      transparent 65%
+      transparent 100%
     );
   }
 
