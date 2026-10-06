@@ -1,9 +1,9 @@
 # Smart Sender
 
-Frontend test assignment with a configured development environment and a typed MSW API.
-The mock implements authentication, session expiry/rotation/revocation, and webhook
-listing/editing. The API client, authentication UI, webhook screens, and the required
-concurrent-401 client test are the next implementation steps.
+Frontend test assignment with a typed MSW API and a tested HTTP client. The mock implements
+authentication, session expiry/rotation/revocation, and webhook listing/editing. The client
+handles CSRF and bounded session recovery, including the required concurrent-401 test.
+Authentication UI and webhook screens are the next implementation steps.
 
 ## Requirements and installation
 
@@ -41,14 +41,42 @@ only when connecting a real backend; Vite must be restarted after changing envir
 | `pnpm test:watch`      | Run Vitest in watch mode                              |
 | `pnpm check`           | Check formatting, lint, types, and tests              |
 
-Eight HTTP integration tests exercise the mock contract: the exact 30-second expiry boundary,
-rotation and revocation, fingerprint binding, CSRF checks before side effects, captcha and
-field validation, stable pagination/search, editing, and missing records/malformed requests.
-The tests inject a clock into the mock instead of waiting for real time to pass.
+The test suite contains eight mock contract tests and sixteen client integration tests.
+Tests inject a clock into the mock and control response ordering with Promises; they never
+wait for real time to pass.
 
-Run only the mock contract suite with `pnpm test src/mocks/create-mock-api.test.ts`.
-The assignment's required test of two concurrent 401 responses sharing a single client-side
-rotate will be added with the API client; it is not covered by these server-side tests.
+- Mock contract: `pnpm test src/mocks/create-mock-api.test.ts` checks expiry, rotation,
+  revocation, fingerprint binding, CSRF checks before side effects, captcha, validation,
+  pagination/search, editing, and malformed/missing requests.
+- Client: `pnpm test src/api/client.test.ts` includes the required test of two parallel
+  real mock 401 responses, exactly one rotate, and two successful retries. It also checks
+  delayed 401 responses, failed recovery, bounded 419 retries, cancellation, and auth races.
+
+## API client
+
+Use one `ApiClient` instance for the application so all requests share recovery operations.
+Its typed methods are `signIn`, `signOut`, `getMe`, `getWebhooks`, `getWebhook`, and
+`updateWebhook`. Query methods accept an optional `AbortSignal` from TanStack Query.
+
+- `signIn` obtains CSRF, sends login with captcha/fingerprint, exchanges the device token,
+  and returns `/v1/me`. The device token exists only in the sign-in call's local scope.
+- Fingerprints use 16 random bytes represented as 32 hex characters. They are created once
+  in `localStorage`; an invalid stored identifier is replaced. No auth tokens are persisted.
+- Every request sends `X-Requested-With` and `credentials: include`. POST/PUT add the current
+  CSRF token, and initial concurrent calls wait for one shared CSRF request.
+- Protected `/v1/*` calls recover from 401 through one shared rotate and retry once. A
+  rotation generation counter prevents a delayed old 401 from starting a second rotate.
+  Auth endpoints themselves never trigger automatic session rotation.
+- POST/PUT calls recover from 419 through one shared CSRF refresh and retry once. CSRF and
+  auth retry limits are independent, and JSON bodies are serialized once for safe replay.
+- Failed rotation or a repeated protected 401 invalidates the local session and calls
+  `onSessionEnd` once. The upcoming auth provider will connect this callback to clearing
+  user state/query caches and showing login. UI cleanup is not wired yet.
+- Logout invalidates locally before revoke, even if revoke fails. New sign-in waits for a
+  pending revoke. Session epochs reject stale responses from earlier login/logout cycles;
+  cancelled consumers do not cancel recovery shared by other requests.
+- Empty 200/204 bodies are supported. `ApiError` exposes status, server exception type,
+  and field errors; malformed error responses fall back to a status-based message.
 
 ## Mock credentials and contract choices
 
@@ -83,7 +111,7 @@ The assignment leaves a few edge cases open. This implementation makes these cho
 - TanStack Router with file-based routes, generated types, and automatic code splitting.
   The assignment leaves the routing library open, so TanStack Router is permitted.
 - TanStack Query for server state. Automatic query and mutation retries are disabled;
-  the upcoming API client will own the bounded 401/419 recovery policy.
+  the API client owns the bounded 401/419 recovery policy.
 - React Hook Form, Zod, and the Zod resolver for upcoming forms and parameter validation.
 - Tailwind CSS v4 through the official Vite plugin; no separate PostCSS configuration.
 - MSW v2, which is compatible with Vitest's MSW peer dependency. Shared handlers are
@@ -113,7 +141,7 @@ worker with `pnpm exec msw init public --save` after updating MSW.
 
 ```text
 src/
-  api/       Request/response types and the API error contract
+  api/       HTTP client, fingerprint, error parsing, DTOs, client integration tests
   app/       Application providers, QueryClient, typed router
   mocks/     In-memory API, fixtures, response helpers, contract tests, MSW adapters
   routes/    File-based routes and root layout
