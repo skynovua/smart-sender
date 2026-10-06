@@ -60,7 +60,8 @@ export class ApiClient {
 
   constructor(options: ApiClientOptions = {}) {
     this.baseUrl = options.baseUrl ?? globalThis.location?.origin ?? 'http://localhost';
-    this.fetch = options.fetch ?? fetch;
+    // Preserve the native browser receiver and use fetch after MSW has started.
+    this.fetch = options.fetch ?? ((input, init) => globalThis.fetch(input, init));
     this.getFingerprint = options.getFingerprint ?? getDeviceFingerprint;
     this.onSessionEnd = options.onSessionEnd ?? (() => {});
   }

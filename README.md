@@ -20,7 +20,7 @@ MSW is enabled by default. Mock data resets on page reload.
 pnpm test
 ```
 
-The integration tests cover the mock API contract and API client, including two concurrent `401` responses sharing one token rotation and then retrying successfully.
+The integration tests cover the mock API contract, API client, and authentication UI. They include two concurrent `401` responses sharing one token rotation and then retrying successfully.
 
 ## Test credentials
 
@@ -36,9 +36,7 @@ The integration tests cover the mock API contract and API client, including two 
 
 ## Unfinished
 
-The mock API and API client are implemented and tested. The following UI work remains:
+The mock API, API client, login/logout, and protected routes are implemented and tested. The following UI work remains:
 
-- Login/logout screens and protected routes.
 - Webhook list with search and pagination stored in URL parameters.
 - Webhook editing and field validation messages.
-- Connecting session termination to user state, query cache cleanup, and navigation to login.

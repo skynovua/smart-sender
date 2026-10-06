@@ -1,8 +1,12 @@
 import type { QueryClient } from '@tanstack/react-query';
 import { createRootRouteWithContext, Link, Outlet } from '@tanstack/react-router';
 
-interface RouterContext {
+import type { AuthSession } from '@/auth/session';
+import { useUser } from '@/auth/use-user';
+
+export interface RouterContext {
   queryClient: QueryClient;
+  auth: AuthSession;
 }
 
 export const Route = createRootRouteWithContext<RouterContext>()({
@@ -11,15 +15,35 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 });
 
 function RootLayout() {
+  const { auth } = Route.useRouteContext();
+  const user = useUser(auth);
+
   return (
     <div className="min-h-svh bg-slate-50 text-slate-900">
       <header className="border-b border-slate-200 bg-white px-6 py-4">
-        <Link
-          to="/"
-          className="font-semibold focus-visible:outline-2 focus-visible:outline-offset-4"
-        >
-          Smart Sender
-        </Link>
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4">
+          <Link
+            to="/"
+            className="font-semibold focus-visible:outline-2 focus-visible:outline-offset-4"
+          >
+            Smart Sender
+          </Link>
+          {user && (
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-slate-600">{user.name}</span>
+              <button
+                type="button"
+                onClick={() => {
+                  // Local logout completes even when the revoke request fails.
+                  void auth.signOut().catch(() => {});
+                }}
+                className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+              >
+                Вийти
+              </button>
+            </div>
+          )}
+        </div>
       </header>
       <main className="mx-auto max-w-5xl px-6 py-12">
         <Outlet />

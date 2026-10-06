@@ -392,3 +392,22 @@ test('validation and not-found errors expose typed details without logging out a
   });
   expect(onSessionEnd).not.toHaveBeenCalled();
 });
+
+test('default fetch keeps the browser receiver and picks up interception installed after construction', async () => {
+  const network = globalThis.fetch.bind(globalThis);
+  const api = new ApiClient({
+    baseUrl: 'http://localhost',
+    getFingerprint: () => fingerprint,
+  });
+  const intercepted = vi.spyOn(globalThis, 'fetch').mockImplementation(function (
+    this: typeof globalThis,
+    input,
+    init,
+  ) {
+    expect(this).toBe(globalThis);
+    return network(input, init);
+  });
+
+  expect(await api.signIn(mockCredentials)).toEqual(mockUser);
+  expect(intercepted).toHaveBeenCalledTimes(4);
+});
