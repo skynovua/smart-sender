@@ -62,7 +62,7 @@ function LoginPage() {
   });
 
   return (
-    <section className="mx-auto grid min-h-[calc(100svh-5rem)] max-w-6xl items-center gap-12 py-12 lg:grid-cols-[1.15fr_1fr] lg:gap-20 lg:py-12">
+    <section className="mx-auto grid w-full max-w-6xl flex-1 items-center gap-12 py-12 lg:grid-cols-[1.15fr_1fr] lg:gap-20 lg:py-12">
       <div className="login-art hidden lg:block">
         <p className="eyebrow mb-7 text-mid-azure">Простір для ваших інтеграцій</p>
         <h2 className="text-5xl leading-[1.1] font-semibold tracking-[-0.045em] xl:text-6xl">

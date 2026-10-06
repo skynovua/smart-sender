@@ -20,8 +20,8 @@ function RootLayout() {
   const user = useUser(auth);
 
   return (
-    <div className="min-h-svh bg-canvas text-ink">
-      <header className="border-b border-border bg-canvas px-5 sm:px-8">
+    <div className="flex min-h-svh flex-col bg-canvas text-ink">
+      <header className="shrink-0 border-b border-border bg-canvas px-5 sm:px-8">
         <div className="mx-auto flex h-20 max-w-[1600px] items-center justify-between gap-4">
           <Link to="/" search={{ page: 1, search: '' }} className="brand-link sm:gap-3 sm:text-lg">
             <span className="brand-mark">
@@ -55,7 +55,7 @@ function RootLayout() {
           )}
         </div>
       </header>
-      <div className="mx-auto flex max-w-[1600px]">
+      <div className="mx-auto flex w-full max-w-[1600px] flex-1">
         {user && (
           <aside className="hidden w-56 shrink-0 flex-col border-r border-border px-5 py-10 lg:flex">
             <p className="eyebrow px-3">Робочий простір</p>
@@ -74,8 +74,8 @@ function RootLayout() {
         <main
           className={
             user
-              ? 'min-h-[calc(100svh-5rem)] min-w-0 flex-1 px-5 py-8 sm:px-8 sm:py-10 xl:px-12'
-              : 'w-full px-5 sm:px-8'
+              ? 'min-w-0 flex-1 px-5 py-8 sm:px-8 sm:py-10 xl:px-12'
+              : 'flex w-full flex-col px-5 sm:px-8'
           }
         >
           <Outlet />
