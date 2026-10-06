@@ -19,26 +19,27 @@ function RootLayout() {
   const user = useUser(auth);
 
   return (
-    <div className="min-h-svh bg-slate-50 text-slate-900">
-      <header className="border-b border-slate-200 bg-white px-6 py-4">
+    <div className="min-h-svh bg-canvas text-ink">
+      <div aria-hidden="true" className="h-1 bg-brand-gradient" />
+      <header className="border-b border-border bg-surface px-6 py-4">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4">
           <Link
             to="/"
             search={{ page: 1, search: '' }}
-            className="font-semibold focus-visible:outline-2 focus-visible:outline-offset-4"
+            className="font-semibold text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
           >
             Smart Sender
           </Link>
           {user && (
             <div className="flex items-center gap-4">
-              <span className="text-sm text-slate-600">{user.name}</span>
+              <span className="text-sm text-muted">{user.name}</span>
               <button
                 type="button"
                 onClick={() => {
                   // Local logout completes even when the revoke request fails.
                   void auth.signOut().catch(() => {});
                 }}
-                className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                className="rounded-lg border border-input-border px-3 py-2 text-sm font-medium hover:bg-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
                 Вийти
               </button>
@@ -60,7 +61,7 @@ function NotFoundPage() {
       <Link
         to="/"
         search={{ page: 1, search: '' }}
-        className="mt-4 inline-block text-blue-700 underline"
+        className="mt-4 inline-block text-primary underline"
       >
         На головну
       </Link>

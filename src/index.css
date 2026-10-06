@@ -1,5 +1,30 @@
 @import 'tailwindcss';
 
+@theme {
+  --color-primary: #00638e;
+  --color-primary-hover: #004a6b;
+  --color-light-azure: #bfd8e3;
+  --color-mid-azure: #8cb9cc;
+  --color-surface: #ffffff;
+  --color-ink: #141414;
+  --color-muted: #2b2b2b;
+  --color-black: #000000;
+  --color-canvas: color-mix(in srgb, var(--color-light-azure) 20%, var(--color-surface));
+  --color-border: var(--color-light-azure);
+  --color-input-border: color-mix(in srgb, var(--color-muted) 55%, var(--color-surface));
+  --color-danger: #b42318;
+}
+
+@utility bg-brand-gradient {
+  background-image: linear-gradient(
+    90deg,
+    var(--color-black),
+    var(--color-primary-hover),
+    var(--color-primary),
+    var(--color-mid-azure)
+  );
+}
+
 @layer base {
   body {
     margin: 0;

@@ -38,14 +38,14 @@ function WebhookEditPage() {
 
   const errorNotice = (
     <div className={data ? 'mb-6' : undefined}>
-      <p role="alert" className="text-red-700">
+      <p role="alert" className="text-danger">
         {data ? 'Не вдалося оновити дані вебхука.' : 'Не вдалося завантажити вебхук.'}
       </p>
       <button
         type="button"
         onClick={() => void refetch()}
         disabled={isFetching}
-        className="mt-4 rounded-lg border border-slate-300 px-4 py-2 font-medium hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-wait disabled:opacity-50"
+        className="mt-4 rounded-lg border border-input-border px-4 py-2 font-medium hover:bg-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-50"
       >
         Спробувати ще раз
       </button>
@@ -57,15 +57,15 @@ function WebhookEditPage() {
       <Link
         to="/"
         search={params}
-        className="text-sm text-blue-700 underline focus-visible:outline-2 focus-visible:outline-offset-4"
+        className="text-sm text-primary underline focus-visible:outline-2 focus-visible:outline-offset-4"
       >
         До списку вебхуків
       </Link>
-      <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+      <div className="mt-6 rounded-2xl border border-border bg-surface p-6 shadow-sm sm:p-8">
         {notFound ? (
           <h1 className="text-2xl font-semibold">Вебхук не знайдено</h1>
         ) : isPending ? (
-          <p role="status" className="text-slate-600">
+          <p role="status" className="text-muted">
             Завантажуємо вебхук…
           </p>
         ) : isError && !data ? (
@@ -139,7 +139,7 @@ function WebhookEditForm({ webhook }: { webhook: Webhook }) {
   return (
     <>
       <h1 className="text-2xl font-semibold tracking-tight">Редагування вебхука</h1>
-      <p className="mt-2 text-sm text-slate-600">Змініть назву або URL для отримання подій.</p>
+      <p className="mt-2 text-sm text-muted">Змініть назву або URL для отримання подій.</p>
       <form
         onSubmit={(event) => void handleSubmit(submit)(event)}
         noValidate
@@ -156,10 +156,10 @@ function WebhookEditForm({ webhook }: { webhook: Webhook }) {
             readOnly={isSubmitting}
             aria-invalid={Boolean(errors.name)}
             aria-describedby={errors.name ? 'name-error' : undefined}
-            className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2.5 focus-visible:outline-2 focus-visible:outline-blue-600 aria-invalid:border-red-500"
+            className="mt-2 w-full rounded-lg border border-input-border px-3 py-2.5 focus-visible:outline-2 focus-visible:outline-primary aria-invalid:border-danger"
           />
           {errors.name && (
-            <p id="name-error" role="alert" className="mt-2 text-sm text-red-700">
+            <p id="name-error" role="alert" className="mt-2 text-sm text-danger">
               {errors.name.message}
             </p>
           )}
@@ -175,20 +175,20 @@ function WebhookEditForm({ webhook }: { webhook: Webhook }) {
             readOnly={isSubmitting}
             aria-invalid={Boolean(errors.url)}
             aria-describedby={errors.url ? 'url-error' : 'url-hint'}
-            className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2.5 focus-visible:outline-2 focus-visible:outline-blue-600 aria-invalid:border-red-500"
+            className="mt-2 w-full rounded-lg border border-input-border px-3 py-2.5 focus-visible:outline-2 focus-visible:outline-primary aria-invalid:border-danger"
           />
           {errors.url ? (
-            <p id="url-error" role="alert" className="mt-2 text-sm text-red-700">
+            <p id="url-error" role="alert" className="mt-2 text-sm text-danger">
               {errors.url.message}
             </p>
           ) : (
-            <p id="url-hint" className="mt-2 text-sm text-slate-500">
+            <p id="url-hint" className="mt-2 text-sm text-muted">
               Адреса має починатися з http:// або https://.
             </p>
           )}
         </div>
         {errors.root && (
-          <p role="alert" className="text-sm text-red-700">
+          <p role="alert" className="text-sm text-danger">
             {errors.root.message}
           </p>
         )}
@@ -196,14 +196,14 @@ function WebhookEditForm({ webhook }: { webhook: Webhook }) {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="rounded-lg bg-blue-700 px-4 py-2.5 font-medium text-white hover:bg-blue-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-wait disabled:opacity-70"
+            className="rounded-lg bg-primary px-4 py-2.5 font-medium text-surface hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-70"
           >
             {isSubmitting ? 'Зберігаємо…' : 'Зберегти'}
           </button>
           <Link
             to="/"
             search={params}
-            className="rounded-lg border border-slate-300 px-4 py-2.5 font-medium hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+            className="rounded-lg border border-input-border px-4 py-2.5 font-medium hover:bg-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             Скасувати
           </Link>

@@ -61,9 +61,9 @@ function LoginPage() {
   });
 
   return (
-    <section className="mx-auto max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+    <section className="mx-auto max-w-md rounded-2xl border border-border bg-surface p-6 shadow-sm sm:p-8">
       <h1 className="text-2xl font-semibold tracking-tight">Вхід</h1>
-      <p className="mt-2 text-sm text-slate-600">Увійдіть, щоб керувати вебхуками.</p>
+      <p className="mt-2 text-sm text-muted">Увійдіть, щоб керувати вебхуками.</p>
       <form onSubmit={(event) => void submit(event)} noValidate className="mt-8 space-y-5">
         <fieldset className="space-y-5">
           <div>
@@ -78,10 +78,10 @@ function LoginPage() {
               readOnly={isSubmitting}
               aria-invalid={Boolean(errors.email)}
               aria-describedby={errors.email ? 'email-error' : undefined}
-              className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2.5 focus-visible:outline-2 focus-visible:outline-blue-600 aria-invalid:border-red-500"
+              className="mt-2 w-full rounded-lg border border-input-border px-3 py-2.5 focus-visible:outline-2 focus-visible:outline-primary aria-invalid:border-danger"
             />
             {errors.email && (
-              <p id="email-error" role="alert" className="mt-2 text-sm text-red-700">
+              <p id="email-error" role="alert" className="mt-2 text-sm text-danger">
                 {errors.email.message}
               </p>
             )}
@@ -98,23 +98,23 @@ function LoginPage() {
               readOnly={isSubmitting}
               aria-invalid={Boolean(errors.password)}
               aria-describedby={errors.password ? 'password-error' : undefined}
-              className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2.5 focus-visible:outline-2 focus-visible:outline-blue-600 aria-invalid:border-red-500"
+              className="mt-2 w-full rounded-lg border border-input-border px-3 py-2.5 focus-visible:outline-2 focus-visible:outline-primary aria-invalid:border-danger"
             />
             {errors.password && (
-              <p id="password-error" role="alert" className="mt-2 text-sm text-red-700">
+              <p id="password-error" role="alert" className="mt-2 text-sm text-danger">
                 {errors.password.message}
               </p>
             )}
           </div>
           {errors.root && (
-            <p role="alert" className="text-sm text-red-700">
+            <p role="alert" className="text-sm text-danger">
               {errors.root.message}
             </p>
           )}
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full rounded-lg bg-blue-700 px-4 py-2.5 font-medium text-white hover:bg-blue-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-wait"
+            className="w-full rounded-lg bg-primary px-4 py-2.5 font-medium text-surface hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-wait"
           >
             {isSubmitting ? 'Входимо…' : 'Увійти'}
           </button>
