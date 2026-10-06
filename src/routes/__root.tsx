@@ -26,7 +26,7 @@ function RootLayout() {
           <Link
             to="/"
             search={{ page: 1, search: '' }}
-            className="font-semibold text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+            className="font-semibold text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus"
           >
             Smart Sender
           </Link>
@@ -39,7 +39,7 @@ function RootLayout() {
                   // Local logout completes even when the revoke request fails.
                   void auth.signOut().catch(() => {});
                 }}
-                className="rounded-lg border border-input-border px-3 py-2 text-sm font-medium hover:bg-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                className="rounded-lg border border-input-border px-3 py-2 text-sm font-medium hover:bg-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
               >
                 Вийти
               </button>
@@ -61,7 +61,7 @@ function NotFoundPage() {
       <Link
         to="/"
         search={{ page: 1, search: '' }}
-        className="mt-4 inline-block text-primary underline"
+        className="mt-4 inline-block text-accent underline"
       >
         На головну
       </Link>

@@ -50,12 +50,12 @@ function WebhooksPage() {
             type="search"
             defaultValue={params.search}
             placeholder="Наприклад, Payment"
-            className="mt-2 w-full rounded-lg border border-input-border bg-surface px-3 py-2.5 focus-visible:outline-2 focus-visible:outline-primary"
+            className="mt-2 w-full rounded-lg border border-input-border bg-canvas px-3 py-2.5 focus-visible:outline-2 focus-visible:outline-focus"
           />
         </div>
         <button
           type="submit"
-          className="rounded-lg bg-primary px-4 py-2.5 font-medium text-surface hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="rounded-lg bg-primary px-4 py-2.5 font-medium text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
         >
           Знайти
         </button>
@@ -63,7 +63,7 @@ function WebhooksPage() {
           <button
             type="button"
             onClick={() => void navigate({ search: { page: 1, search: '' } })}
-            className="rounded-lg border border-input-border bg-surface px-4 py-2.5 font-medium hover:bg-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="rounded-lg border border-input-border bg-surface px-4 py-2.5 font-medium hover:bg-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
           >
             Скинути пошук
           </button>
@@ -87,7 +87,7 @@ function WebhooksPage() {
               type="button"
               onClick={() => void refetch()}
               disabled={isFetching}
-              className="mt-4 rounded-lg border border-input-border px-4 py-2 font-medium hover:bg-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-50"
+              className="mt-4 rounded-lg border border-input-border px-4 py-2 font-medium hover:bg-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-wait disabled:opacity-50"
             >
               Спробувати ще раз
             </button>
@@ -128,7 +128,7 @@ function WebhooksPage() {
                           params={{ id: String(webhook.id) }}
                           search={params}
                           aria-label={`Редагувати ${webhook.name}`}
-                          className="text-primary underline decoration-light-azure underline-offset-4 hover:decoration-primary focus-visible:outline-2 focus-visible:outline-offset-4"
+                          className="text-accent underline decoration-light-azure underline-offset-4 hover:decoration-mid-azure focus-visible:outline-2 focus-visible:outline-offset-4"
                         >
                           {webhook.name}
                         </Link>
@@ -138,8 +138,8 @@ function WebhooksPage() {
                         <span
                           className={
                             webhook.active
-                              ? 'inline-flex rounded-full bg-light-azure px-2.5 py-1 text-xs font-medium text-primary-hover'
-                              : 'inline-flex rounded-full bg-ink/5 px-2.5 py-1 text-xs font-medium text-muted'
+                              ? 'inline-flex rounded-full bg-primary-hover px-2.5 py-1 text-xs font-medium text-light-azure'
+                              : 'inline-flex rounded-full bg-canvas px-2.5 py-1 text-xs font-medium text-muted'
                           }
                         >
                           {webhook.active ? 'Активний' : 'Неактивний'}
@@ -165,7 +165,7 @@ function WebhooksPage() {
                   onClick={() =>
                     void navigate({ search: { ...params, page: data.paging.pages.current - 1 } })
                   }
-                  className="rounded-lg border border-input-border px-3 py-2 text-sm font-medium hover:bg-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-40"
+                  className="rounded-lg border border-input-border px-3 py-2 text-sm font-medium hover:bg-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Попередня
                 </button>
@@ -175,7 +175,7 @@ function WebhooksPage() {
                   onClick={() =>
                     void navigate({ search: { ...params, page: data.paging.pages.current + 1 } })
                   }
-                  className="rounded-lg border border-input-border px-3 py-2 text-sm font-medium hover:bg-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-40"
+                  className="rounded-lg border border-input-border px-3 py-2 text-sm font-medium hover:bg-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Наступна
                 </button>

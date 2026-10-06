@@ -5,14 +5,17 @@
   --color-primary-hover: #004a6b;
   --color-light-azure: #bfd8e3;
   --color-mid-azure: #8cb9cc;
-  --color-surface: #ffffff;
-  --color-ink: #141414;
-  --color-muted: #2b2b2b;
+  --color-surface: #2b2b2b;
+  --color-ink: #ffffff;
+  --color-muted: var(--color-light-azure);
+  --color-accent: var(--color-light-azure);
+  --color-focus: var(--color-mid-azure);
+  --color-on-primary: #ffffff;
   --color-black: #000000;
-  --color-canvas: color-mix(in srgb, var(--color-light-azure) 20%, var(--color-surface));
-  --color-border: var(--color-light-azure);
-  --color-input-border: color-mix(in srgb, var(--color-muted) 55%, var(--color-surface));
-  --color-danger: #b42318;
+  --color-canvas: #141414;
+  --color-border: color-mix(in srgb, var(--color-light-azure) 18%, var(--color-surface));
+  --color-input-border: color-mix(in srgb, var(--color-light-azure) 55%, var(--color-surface));
+  --color-danger: #ffb4ab;
 }
 
 @utility bg-brand-gradient {
@@ -26,9 +29,29 @@
 }
 
 @layer base {
+  :root {
+    color-scheme: dark;
+  }
+
   body {
     margin: 0;
     min-width: 320px;
     font-family: system-ui, sans-serif;
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+  }
+
+  input {
+    caret-color: var(--color-accent);
+  }
+
+  input::placeholder {
+    color: var(--color-muted);
+    opacity: 0.8;
+  }
+
+  ::selection {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
   }
 }

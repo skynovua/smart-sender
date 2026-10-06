@@ -78,7 +78,7 @@ function LoginPage() {
               readOnly={isSubmitting}
               aria-invalid={Boolean(errors.email)}
               aria-describedby={errors.email ? 'email-error' : undefined}
-              className="mt-2 w-full rounded-lg border border-input-border px-3 py-2.5 focus-visible:outline-2 focus-visible:outline-primary aria-invalid:border-danger"
+              className="mt-2 w-full rounded-lg border border-input-border bg-canvas px-3 py-2.5 focus-visible:outline-2 focus-visible:outline-focus aria-invalid:border-danger"
             />
             {errors.email && (
               <p id="email-error" role="alert" className="mt-2 text-sm text-danger">
@@ -98,7 +98,7 @@ function LoginPage() {
               readOnly={isSubmitting}
               aria-invalid={Boolean(errors.password)}
               aria-describedby={errors.password ? 'password-error' : undefined}
-              className="mt-2 w-full rounded-lg border border-input-border px-3 py-2.5 focus-visible:outline-2 focus-visible:outline-primary aria-invalid:border-danger"
+              className="mt-2 w-full rounded-lg border border-input-border bg-canvas px-3 py-2.5 focus-visible:outline-2 focus-visible:outline-focus aria-invalid:border-danger"
             />
             {errors.password && (
               <p id="password-error" role="alert" className="mt-2 text-sm text-danger">
@@ -114,7 +114,7 @@ function LoginPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full rounded-lg bg-primary px-4 py-2.5 font-medium text-surface hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-wait"
+            className="w-full rounded-lg bg-primary px-4 py-2.5 font-medium text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-wait"
           >
             {isSubmitting ? 'Входимо…' : 'Увійти'}
           </button>

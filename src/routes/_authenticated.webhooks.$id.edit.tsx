@@ -45,7 +45,7 @@ function WebhookEditPage() {
         type="button"
         onClick={() => void refetch()}
         disabled={isFetching}
-        className="mt-4 rounded-lg border border-input-border px-4 py-2 font-medium hover:bg-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-50"
+        className="mt-4 rounded-lg border border-input-border px-4 py-2 font-medium hover:bg-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-wait disabled:opacity-50"
       >
         Спробувати ще раз
       </button>
@@ -57,7 +57,7 @@ function WebhookEditPage() {
       <Link
         to="/"
         search={params}
-        className="text-sm text-primary underline focus-visible:outline-2 focus-visible:outline-offset-4"
+        className="text-sm text-accent underline focus-visible:outline-2 focus-visible:outline-offset-4"
       >
         До списку вебхуків
       </Link>
@@ -156,7 +156,7 @@ function WebhookEditForm({ webhook }: { webhook: Webhook }) {
             readOnly={isSubmitting}
             aria-invalid={Boolean(errors.name)}
             aria-describedby={errors.name ? 'name-error' : undefined}
-            className="mt-2 w-full rounded-lg border border-input-border px-3 py-2.5 focus-visible:outline-2 focus-visible:outline-primary aria-invalid:border-danger"
+            className="mt-2 w-full rounded-lg border border-input-border bg-canvas px-3 py-2.5 focus-visible:outline-2 focus-visible:outline-focus aria-invalid:border-danger"
           />
           {errors.name && (
             <p id="name-error" role="alert" className="mt-2 text-sm text-danger">
@@ -175,7 +175,7 @@ function WebhookEditForm({ webhook }: { webhook: Webhook }) {
             readOnly={isSubmitting}
             aria-invalid={Boolean(errors.url)}
             aria-describedby={errors.url ? 'url-error' : 'url-hint'}
-            className="mt-2 w-full rounded-lg border border-input-border px-3 py-2.5 focus-visible:outline-2 focus-visible:outline-primary aria-invalid:border-danger"
+            className="mt-2 w-full rounded-lg border border-input-border bg-canvas px-3 py-2.5 focus-visible:outline-2 focus-visible:outline-focus aria-invalid:border-danger"
           />
           {errors.url ? (
             <p id="url-error" role="alert" className="mt-2 text-sm text-danger">
@@ -196,14 +196,14 @@ function WebhookEditForm({ webhook }: { webhook: Webhook }) {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="rounded-lg bg-primary px-4 py-2.5 font-medium text-surface hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-70"
+            className="rounded-lg bg-primary px-4 py-2.5 font-medium text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-wait disabled:opacity-70"
           >
             {isSubmitting ? 'Зберігаємо…' : 'Зберегти'}
           </button>
           <Link
             to="/"
             search={params}
-            className="rounded-lg border border-input-border px-4 py-2.5 font-medium hover:bg-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="rounded-lg border border-input-border px-4 py-2.5 font-medium hover:bg-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
           >
             Скасувати
           </Link>
